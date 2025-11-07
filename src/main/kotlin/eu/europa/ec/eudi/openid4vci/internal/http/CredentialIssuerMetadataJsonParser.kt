@@ -698,15 +698,17 @@ private fun CredentialIssuerMetadataTO.toDomain(expectedIssuer: CredentialIssuer
         }.ensureSuccess { CredentialIssuerMetadataValidationError.InvalidBatchSize() }
     } ?: BatchCredentialIssuance.NotSupported
 
-    val credentialRequestEncryption = credentialRequestEncryption.toDomain()
-    val credentialResponseEncryption = credentialResponseEncryption.toDomain()
+//    val credentialRequestEncryption = credentialRequestEncryption.toDomain()
+    val credentialRequestEncryption = CredentialRequestEncryption.NotSupported
+//    val credentialResponseEncryption = credentialResponseEncryption.toDomain()
+    val credentialResponseEncryption = CredentialResponseEncryption.NotSupported
 
     // If issuer supports or requires credential response encryption then it must advertise its request encryption capabilities
-    if (credentialResponseEncryption !is CredentialResponseEncryption.NotSupported) {
-        ensure(credentialRequestEncryption !is CredentialRequestEncryption.NotSupported) {
-            CredentialIssuerMetadataValidationError.CredentialRequestEncryptionMustExistIfCredentialResponseEncryptionExists()
-        }
-    }
+    // if (credentialResponseEncryption !is CredentialResponseEncryption.NotSupported) {
+    //     ensure(credentialRequestEncryption !is CredentialRequestEncryption.NotSupported) {
+    //         CredentialIssuerMetadataValidationError.CredentialRequestEncryptionMustExistIfCredentialResponseEncryptionExists()
+    //     }
+    // }
 
     return CredentialIssuerMetadata(
         credentialIssuerIdentifier,
