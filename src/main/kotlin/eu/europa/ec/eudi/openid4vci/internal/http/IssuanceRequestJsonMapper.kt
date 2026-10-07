@@ -134,6 +134,10 @@ internal data class CredentialResponseSuccessTO(
     @SerialName("transaction_id") val transactionId: String? = null,
     @SerialName("interval") val interval: Long? = null,
     @SerialName("notification_id") val notificationId: String? = null,
+    // GRNET fork: display meta-data for the issued credentials, which the WE BUILD rulebook for
+    // SCA-Card (DPC) attestations has the issuer deliver in the credential response's display
+    // array. Unsigned and not part of OpenID4VCI 1.0, so it is passed through as received.
+    @SerialName("display") val display: List<JsonObject>? = null,
 ) {
     init {
         if (!credentials.isNullOrEmpty()) {
@@ -180,6 +184,7 @@ internal data class CredentialResponseSuccessTO(
             issuedCredentials.isNotEmpty() -> SubmissionOutcomeInternal.Success(
                 issuedCredentials,
                 notificationId,
+                display = display,
             )
 
             transactionId != null && interval != null -> SubmissionOutcomeInternal.Deferred(

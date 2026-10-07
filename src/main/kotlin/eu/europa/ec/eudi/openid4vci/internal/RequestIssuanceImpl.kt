@@ -22,6 +22,7 @@ import eu.europa.ec.eudi.openid4vci.*
 import eu.europa.ec.eudi.openid4vci.internal.http.CNonceAndDPoPNonce
 import eu.europa.ec.eudi.openid4vci.internal.http.CredentialEndpointClient
 import eu.europa.ec.eudi.openid4vci.internal.http.NonceEndpointClient
+import kotlinx.serialization.json.JsonObject
 import java.time.Instant
 import kotlin.time.Duration
 
@@ -481,6 +482,8 @@ internal sealed interface SubmissionOutcomeInternal {
         val credentials: List<IssuedCredential>,
         val notificationId: NotificationId?,
         val selectedCredentialReusePolicy: EudiReusePolicy? = null,
+        // GRNET fork: the credential response's display array, if any.
+        val display: List<JsonObject>? = null,
     ) : SubmissionOutcomeInternal
 
     data class Deferred(
@@ -498,7 +501,7 @@ internal sealed interface SubmissionOutcomeInternal {
 
     fun toPub(): SubmissionOutcome =
         when (this) {
-            is Success -> SubmissionOutcome.Success(credentials, notificationId, selectedCredentialReusePolicy)
+            is Success -> SubmissionOutcome.Success(credentials, notificationId, selectedCredentialReusePolicy, display)
             is Deferred -> SubmissionOutcome.Deferred(transactionId, interval)
             is Failed -> SubmissionOutcome.Failed(error)
         }

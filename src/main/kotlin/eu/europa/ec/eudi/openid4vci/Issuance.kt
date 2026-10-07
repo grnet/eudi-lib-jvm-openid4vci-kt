@@ -76,6 +76,12 @@ sealed interface SubmissionOutcome : java.io.Serializable {
         val credentials: List<IssuedCredential>,
         val notificationId: NotificationId?,
         val selectedCredentialReusePolicy: EudiReusePolicy? = null,
+        /**
+         * GRNET fork: the credential response's `display` array, as received, if the issuer sent
+         * one. The WE BUILD rulebook for SCA-Card (DPC) attestations delivers the card's display
+         * meta-data there. It is unsigned.
+         */
+        val display: List<JsonObject>? = null,
     ) : SubmissionOutcome {
         init {
             require(credentials.isNotEmpty()) { "credentials must not be empty" }
