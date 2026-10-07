@@ -1,0 +1,193 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "eu.europa.ec.eudi",
+    "module": "eudi-lib-jvm-openid4vci-kt",
+    "version": "0.14.1-grnet.1",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14.4"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.nimbusds",
+          "module": "oauth2-oidc-sdk",
+          "version": {
+            "requires": "11.37"
+          }
+        },
+        {
+          "group": "io.ktor",
+          "module": "ktor-client-core",
+          "version": {
+            "requires": "3.3.3"
+          }
+        },
+        {
+          "group": "io.ktor",
+          "module": "ktor-client-content-negotiation",
+          "version": {
+            "requires": "3.3.3"
+          }
+        },
+        {
+          "group": "io.ktor",
+          "module": "ktor-client-serialization",
+          "version": {
+            "requires": "3.3.3"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-serialization-json",
+          "version": {
+            "requires": "1.9.0"
+          }
+        },
+        {
+          "group": "io.ktor",
+          "module": "ktor-serialization-kotlinx-json",
+          "version": {
+            "requires": "3.3.3"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.2.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "eudi-lib-jvm-openid4vci-kt-0.14.1-grnet.1.jar",
+          "url": "eudi-lib-jvm-openid4vci-kt-0.14.1-grnet.1.jar",
+          "size": 1434143,
+          "sha512": "0f76cdb41f8cb73fd47b0cfc9dd7f62e45d1f074d0f6cfc42962ec91f1bb60303a375f2f12ae11538d2df53d2d4e2d61905dfe5bf677ffbfbd09aadb0a9359c2",
+          "sha256": "1eb0e9ae4d396e38b0b818e85df803022f5ae5d25cf92b5d5db5392f5bade3d7",
+          "sha1": "58daaa42b6cf2e8bcdf74f65ed76dfb26c3846e7",
+          "md5": "45fefdb60f1dfa11ff4fd18dd8b9fae8"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.eygraber",
+          "module": "uri-kmp",
+          "version": {
+            "requires": "0.0.21"
+          }
+        },
+        {
+          "group": "com.nimbusds",
+          "module": "oauth2-oidc-sdk",
+          "version": {
+            "requires": "11.37"
+          }
+        },
+        {
+          "group": "io.ktor",
+          "module": "ktor-client-core",
+          "version": {
+            "requires": "3.3.3"
+          }
+        },
+        {
+          "group": "io.ktor",
+          "module": "ktor-client-content-negotiation",
+          "version": {
+            "requires": "3.3.3"
+          }
+        },
+        {
+          "group": "io.ktor",
+          "module": "ktor-client-serialization",
+          "version": {
+            "requires": "3.3.3"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-serialization-json",
+          "version": {
+            "requires": "1.9.0"
+          }
+        },
+        {
+          "group": "io.ktor",
+          "module": "ktor-serialization-kotlinx-json",
+          "version": {
+            "requires": "3.3.3"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.2.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "eudi-lib-jvm-openid4vci-kt-0.14.1-grnet.1.jar",
+          "url": "eudi-lib-jvm-openid4vci-kt-0.14.1-grnet.1.jar",
+          "size": 1434143,
+          "sha512": "0f76cdb41f8cb73fd47b0cfc9dd7f62e45d1f074d0f6cfc42962ec91f1bb60303a375f2f12ae11538d2df53d2d4e2d61905dfe5bf677ffbfbd09aadb0a9359c2",
+          "sha256": "1eb0e9ae4d396e38b0b818e85df803022f5ae5d25cf92b5d5db5392f5bade3d7",
+          "sha1": "58daaa42b6cf2e8bcdf74f65ed76dfb26c3846e7",
+          "md5": "45fefdb60f1dfa11ff4fd18dd8b9fae8"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "eudi-lib-jvm-openid4vci-kt-0.14.1-grnet.1-sources.jar",
+          "url": "eudi-lib-jvm-openid4vci-kt-0.14.1-grnet.1-sources.jar",
+          "size": 118498,
+          "sha512": "dec202e5b929cb094f764f642986e0f0017bed403362710807d65eea39851888bc98122c19ce61fe5a742ac8dfcece7ca92d4a100bcf68257e56a2b239a492ad",
+          "sha256": "31977579d857e075185faaf53f78051dc744d7ec3c26d294a673c76a00c6c184",
+          "sha1": "1c6c6feee1b1fbf285c6a4a7de7b4c4a05b3294c",
+          "md5": "39a070d6409c588de0b0b2c45799d325"
+        }
+      ]
+    }
+  ]
+}
