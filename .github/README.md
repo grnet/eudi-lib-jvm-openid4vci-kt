@@ -15,11 +15,11 @@ Upstream's own README is [at the root](../README.md).
 
 ## What differs from upstream
 
-`grnet` is upstream `v0.14.1` with its own version number, a release
-workflow, and this change:
+`grnet` is upstream `v0.16.0` (from `0.16.0-grnet.1`; `v0.14.1` before) with
+its own version number, a release workflow, and this change:
 
 - **The credential response's `display` array is passed through**
-  (`0.14.1-grnet.1`). The WE BUILD rulebook for SCA-Card (DPC) attestations,
+  (since `0.14.1-grnet.1`). The WE BUILD rulebook for SCA-Card (DPC) attestations,
   `rb-sca-card-dpc` §2.9 and §4.1, has the issuer deliver the card's display
   meta-data (alias, last four digits, card art, network branding) "in the
   `display` array of the OpenID4VCI credential response". OpenID4VCI 1.0 does
@@ -30,7 +30,7 @@ workflow, and this change:
 
 ## Versions
 
-Versions look like `<upstream version>-grnet.<N>`, e.g. `0.14.1-grnet.1`: the
+Versions look like `<upstream version>-grnet.<N>`, e.g. `0.16.0-grnet.1`: the
 upstream release the build is based on, then GRNET's release counter on that
 base. A published version is never replaced, so every change, however small,
 gets a new `N`. After a rebase onto a new upstream release, `N` starts again
@@ -50,8 +50,8 @@ Central requirement and the keys are upstream's.
 
 To release, set `version`, commit, and push a matching tag:
 
-    git tag v0.14.1-grnet.1
-    git push origin v0.14.1-grnet.1
+    git tag v0.16.0-grnet.1
+    git push origin v0.16.0-grnet.1
 
 `.github/workflows/grnet-release.yml` checks that the tag matches `version`,
 refuses a version that is already published, builds, and adds the version to

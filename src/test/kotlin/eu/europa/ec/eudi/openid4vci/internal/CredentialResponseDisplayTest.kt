@@ -27,27 +27,27 @@ import kotlin.test.assertNull
 // GRNET fork: the credential response's display array, as the WE BUILD rulebook for SCA-Card (DPC)
 // attestations delivers the card's display meta-data.
 class CredentialResponseDisplayTest {
-
     @Test
     fun `display array of a credential response is passed through`() {
-        val response = JsonSupport.decodeFromString<CredentialResponseSuccessTO>(
-            """
-            {
-              "credentials": [{ "credential": "eyJhbGciOiJFUzI1NiJ9.e30.c2ln~" }],
-              "notification_id": "n-1",
-              "display": [
+        val response =
+            JsonSupport.decodeFromString<CredentialResponseSuccessTO>(
+                """
                 {
-                  "card": {
-                    "alias": "Gold Mastercard",
-                    "last_four": "1234",
-                    "card_art": [{ "theme": "DEFAULT", "image_url": "https://bank.example/card.png" }],
-                    "network_branding": { "network": "mastercard", "branding": { "name": "Mastercard" } }
-                  }
+                  "credentials": [{ "credential": "eyJhbGciOiJFUzI1NiJ9.e30.c2ln~" }],
+                  "notification_id": "n-1",
+                  "display": [
+                    {
+                      "card": {
+                        "alias": "Gold Mastercard",
+                        "last_four": "1234",
+                        "card_art": [{ "theme": "DEFAULT", "image_url": "https://bank.example/card.png" }],
+                        "network_branding": { "network": "mastercard", "branding": { "name": "Mastercard" } }
+                      }
+                    }
+                  ]
                 }
-              ]
-            }
-            """.trimIndent(),
-        )
+                """.trimIndent(),
+            )
 
         val outcome = assertIs<SubmissionOutcome.Success>(response.toDomain().toPub())
         val display = checkNotNull(outcome.display).single()
@@ -58,21 +58,24 @@ class CredentialResponseDisplayTest {
 
     @Test
     fun `display is kept when the reuse policy is selected`() {
-        val response = JsonSupport.decodeFromString<CredentialResponseSuccessTO>(
-            """{ "credentials": [{ "credential": "c" }], "display": [{ "card": { "last_four": "1234" } }] }""",
-        )
+        val response =
+            JsonSupport.decodeFromString<CredentialResponseSuccessTO>(
+                """{ "credentials": [{ "credential": "c" }], "display": [{ "card": { "last_four": "1234" } }] }""",
+            )
 
-        val outcome = assertIs<SubmissionOutcome.Success>(
-            response.toDomain().withSelectedCredentialReusePolicy(null).toPub(),
-        )
+        val outcome =
+            assertIs<SubmissionOutcome.Success>(
+                response.toDomain().withSelectedCredentialReusePolicy(null).toPub(),
+            )
         assertEquals(1, outcome.display?.size)
     }
 
     @Test
     fun `a credential response without display has none`() {
-        val response = JsonSupport.decodeFromString<CredentialResponseSuccessTO>(
-            """{ "credentials": [{ "credential": "c" }] }""",
-        )
+        val response =
+            JsonSupport.decodeFromString<CredentialResponseSuccessTO>(
+                """{ "credentials": [{ "credential": "c" }] }""",
+            )
 
         val outcome = assertIs<SubmissionOutcome.Success>(response.toDomain().toPub())
         assertNull(outcome.display)

@@ -27,12 +27,16 @@ import kotlin.time.Duration
  */
 sealed interface Credential {
     @JvmInline
-    value class Str(val value: String) : Credential {
+    value class Str(
+        val value: String,
+    ) : Credential {
         override fun toString(): String = value
     }
 
     @JvmInline
-    value class Json(val value: JsonObject) : Credential {
+    value class Json(
+        val value: JsonObject,
+    ) : Credential {
         override fun toString(): String = value.toString()
     }
 }
@@ -48,11 +52,15 @@ data class IssuedCredential(
     val additionalInfo: JsonObject?,
 ) : java.io.Serializable {
     companion object {
-        fun string(credential: String, additionalInfo: JsonObject? = null): IssuedCredential =
-            IssuedCredential(Credential.Str(credential), additionalInfo)
+        fun string(
+            credential: String,
+            additionalInfo: JsonObject? = null,
+        ): IssuedCredential = IssuedCredential(Credential.Str(credential), additionalInfo)
 
-        fun json(credential: JsonObject, additionalInfo: JsonObject? = null): IssuedCredential =
-            IssuedCredential(Credential.Json(credential), additionalInfo)
+        fun json(
+            credential: JsonObject,
+            additionalInfo: JsonObject? = null,
+        ): IssuedCredential = IssuedCredential(Credential.Json(credential), additionalInfo)
     }
 }
 
@@ -60,7 +68,6 @@ data class IssuedCredential(
  * Sealed hierarchy of states describing the state of an issuance request submitted to a credential issuer.
  */
 sealed interface SubmissionOutcome : java.io.Serializable {
-
     /**
      * State that denotes the successful submission of an issuance request
      * @param credentials The outcome of the issuance request.
@@ -95,7 +102,10 @@ sealed interface SubmissionOutcome : java.io.Serializable {
      * @param transactionId  A string identifying a Deferred Issuance transaction.
      * @param interval Represents the minimum amount of time before sending a new deferred issuance request.
      */
-    data class Deferred(val transactionId: TransactionId, val interval: Duration) : SubmissionOutcome {
+    data class Deferred(
+        val transactionId: TransactionId,
+        val interval: Duration,
+    ) : SubmissionOutcome {
         init {
             require(interval.isPositive()) { "interval must be positive" }
         }
@@ -106,7 +116,9 @@ sealed interface SubmissionOutcome : java.io.Serializable {
      *
      * @param error The error that caused the failure of the request
      */
-    data class Failed(val error: CredentialIssuanceError) : SubmissionOutcome
+    data class Failed(
+        val error: CredentialIssuanceError,
+    ) : SubmissionOutcome
 }
 
 /**
@@ -114,7 +126,6 @@ sealed interface SubmissionOutcome : java.io.Serializable {
  * identifier and a claim set ot by providing a credential identifier retrieved from a token endpoint while authorizing an issuance request.
  */
 sealed interface IssuanceRequestPayload {
-
     val credentialConfigurationIdentifier: CredentialConfigurationIdentifier
 
     /**
@@ -141,7 +152,6 @@ sealed interface IssuanceRequestPayload {
 typealias AuthorizedRequestAnd<T> = Pair<AuthorizedRequest, T>
 
 sealed interface ProofSpecification {
-
     data object NoProof : ProofSpecification
 
     data class JwtProofWithKeyAttestation(
@@ -161,7 +171,6 @@ sealed interface ProofSpecification {
  * An interface for submitting a credential issuance request.
  */
 fun interface RequestIssuance {
-
     /**
      * Places a request to the credential issuance endpoint.
      *
@@ -185,7 +194,6 @@ fun interface RequestIssuance {
  * that the wallet expects in the response to its issuance request.
  */
 fun interface ResponseEncryptionSpecFactory {
-
     fun make(
         issuerSupportedResponseEncryptedParameters: SupportedResponseEncryptionParameters,
         walletEncryptionSupportConfig: EncryptionSupportConfig,
@@ -195,19 +203,28 @@ fun interface ResponseEncryptionSpecFactory {
         val DEFAULT: ResponseEncryptionSpecFactory =
             ResponseEncryptionSpecFactory { issuerSupportedResponseEncryptedParameters, walletEncryptionSupportConfig ->
                 val issuerSupportedPayloadCompression = issuerSupportedResponseEncryptedParameters.payloadCompression
-                val compressionAlg = when (issuerSupportedPayloadCompression) {
-                    PayloadCompression.NotSupported -> null
-                    is PayloadCompression.Supported ->
-                        walletEncryptionSupportConfig.compressionAlgorithms?.intersect(
-                            issuerSupportedPayloadCompression.algorithms.toSet(),
-                        )?.firstOrNull()
-                }
+                val compressionAlg =
+                    when (issuerSupportedPayloadCompression) {
+                        PayloadCompression.NotSupported -> {
+                            null
+                        }
 
-                val encryptionMethod = issuerSupportedResponseEncryptedParameters.encryptionMethods
-                    .intersect(walletEncryptionSupportConfig.supportedEncryptionMethods.toSet()).firstOrNull()
+                        is PayloadCompression.Supported -> {
+                            walletEncryptionSupportConfig.compressionAlgorithms
+                                ?.intersect(
+                                    issuerSupportedPayloadCompression.algorithms.toSet(),
+                                )?.firstOrNull()
+                        }
+                    }
+
+                val encryptionMethod =
+                    issuerSupportedResponseEncryptedParameters.encryptionMethods
+                        .intersect(walletEncryptionSupportConfig.supportedEncryptionMethods.toSet())
+                        .firstOrNull()
                 encryptionMethod?.let { method ->
                     issuerSupportedResponseEncryptedParameters.algorithms.firstNotNullOfOrNull { algorithm ->
-                        KeyGenerator.genKeyIfSupported(walletEncryptionSupportConfig, algorithm)
+                        KeyGenerator
+                            .genKeyIfSupported(walletEncryptionSupportConfig, algorithm)
                             ?.let { jwk -> EncryptionSpec(jwk, method, compressionAlg) }
                     }
                 }
@@ -216,7 +233,6 @@ fun interface ResponseEncryptionSpecFactory {
 }
 
 fun interface RequestEncryptionSpecFactory {
-
     fun make(
         issuerSupportedRequestEncryptionParameters: SupportedRequestEncryptionParameters,
         walletEncryptionSupportConfig: EncryptionSupportConfig,
@@ -227,18 +243,24 @@ fun interface RequestEncryptionSpecFactory {
             RequestEncryptionSpecFactory { issuerSupportedRequestEncryptionParameters, walletEncryptionSupportConfig ->
                 val issuerSupportedPayloadCompression = issuerSupportedRequestEncryptionParameters.payloadCompression
                 val walletSupportedCompressionAlgs = walletEncryptionSupportConfig.compressionAlgorithms
-                val compressionAlg = when (issuerSupportedPayloadCompression) {
-                    PayloadCompression.NotSupported -> null
-                    is PayloadCompression.Supported ->
-                        walletSupportedCompressionAlgs?.intersect(issuerSupportedPayloadCompression.algorithms.toSet())?.firstOrNull()
-                }
+                val compressionAlg =
+                    when (issuerSupportedPayloadCompression) {
+                        PayloadCompression.NotSupported -> {
+                            null
+                        }
+
+                        is PayloadCompression.Supported -> {
+                            walletSupportedCompressionAlgs?.intersect(issuerSupportedPayloadCompression.algorithms.toSet())?.firstOrNull()
+                        }
+                    }
 
                 val walletSupportedEncryptionAlgorithms = walletEncryptionSupportConfig.supportedEncryptionAlgorithms
                 val walletSupportedEncryptionMethods = walletEncryptionSupportConfig.supportedEncryptionMethods
                 val encryptionMethod =
-                    issuerSupportedRequestEncryptionParameters.encryptionMethods.intersect(
-                        walletSupportedEncryptionMethods.toSet(),
-                    ).firstOrNull()
+                    issuerSupportedRequestEncryptionParameters.encryptionMethods
+                        .intersect(
+                            walletSupportedEncryptionMethods.toSet(),
+                        ).firstOrNull()
                 encryptionMethod?.let { method ->
                     issuerSupportedRequestEncryptionParameters.encryptionKeys.keys
                         .filter { it.algorithm in walletSupportedEncryptionAlgorithms }
@@ -251,8 +273,9 @@ fun interface RequestEncryptionSpecFactory {
 /**
  * Errors that can happen in the process of issuance process
  */
-sealed class CredentialIssuanceError(message: String) : Throwable(message) {
-
+sealed class CredentialIssuanceError(
+    message: String,
+) : Throwable(message) {
     /**
      * Indicates that the state returned by the authorization server doesn't match the state
      * included which was included in the authorization request, during authorization code flow
@@ -270,16 +293,14 @@ sealed class CredentialIssuanceError(message: String) : Throwable(message) {
      * Indicates that the `iss` parameter was expected in the authorization response (because the
      * authorization server advertises support for it, or the Wallet requires it), but it was missing
      */
-    class MissingAuthorizationResponseIssuer :
-        CredentialIssuanceError("MissingAuthorizationResponseIssuer")
+    class MissingAuthorizationResponseIssuer : CredentialIssuanceError("MissingAuthorizationResponseIssuer")
 
     /**
      * Indicates that the Wallet requires the authorization server to support the `iss` parameter in
      * the authorization response (via `authorization_response_iss_parameter_supported`), but the
      * authorization server does not advertise support for it
      */
-    class AuthorizationResponseIssuerParamNotSupported :
-        CredentialIssuanceError("AuthorizationResponseIssuerParamNotSupported")
+    class AuthorizationResponseIssuerParamNotSupported : CredentialIssuanceError("AuthorizationResponseIssuerParamNotSupported")
 
     /**
      * Failure when placing Pushed Authorization Request to Authorization Server
@@ -319,8 +340,9 @@ sealed class CredentialIssuanceError(message: String) : Throwable(message) {
      * has automatically retried to recover from an [InvalidProof] error and failed
      */
     @Deprecated("This error is not used anymore")
-    data class IrrecoverableInvalidProof(val errorDescription: String? = null) :
-        CredentialIssuanceError("Irrecoverable invalid proof ")
+    data class IrrecoverableInvalidProof(
+        val errorDescription: String? = null,
+    ) : CredentialIssuanceError("Irrecoverable invalid proof ")
 
     /**
      * Invalid access token passed to issuance server
@@ -364,8 +386,9 @@ sealed class CredentialIssuanceError(message: String) : Throwable(message) {
      * Issuance server provides supports batch_size which is
      * smaller than the number of proofs the caller provided.
      */
-    class IssuerBatchSizeLimitExceeded(val batchSize: Int) :
-        CredentialIssuanceError("IssuerBatchSizeLimitExceeded $batchSize")
+    class IssuerBatchSizeLimitExceeded(
+        val batchSize: Int,
+    ) : CredentialIssuanceError("IssuerBatchSizeLimitExceeded $batchSize")
 
     /**
      * Issuance server does not support deferred credential issuance
@@ -391,18 +414,23 @@ sealed class CredentialIssuanceError(message: String) : Throwable(message) {
     /**
      * Issuance server response is un-parsable
      */
-    data class ResponseUnparsable(val error: String) : CredentialIssuanceError("ResponseUnparsable")
+    data class ResponseUnparsable(
+        val error: String,
+    ) : CredentialIssuanceError("ResponseUnparsable")
 
     /**
      * Request to nonce endpoint of issuer failed
      */
-    data class CNonceRequestFailed(val error: String) : CredentialIssuanceError("CNonceRequestFailed")
+    data class CNonceRequestFailed(
+        val error: String,
+    ) : CredentialIssuanceError("CNonceRequestFailed")
 
     /**
      * Sealed hierarchy of errors related to proof generation
      */
-    sealed class ProofGenerationError(message: String) : CredentialIssuanceError(message) {
-
+    sealed class ProofGenerationError(
+        message: String,
+    ) : CredentialIssuanceError(message) {
         /**
          * Proof type provided for a specific credential is not supported from the issuance server
          */
@@ -411,20 +439,19 @@ sealed class CredentialIssuanceError(message: String) : Throwable(message) {
         /**
          * Proof type signing algorithm provided for specific credential is not supported from the issuance server
          */
-        class ProofTypeSigningAlgorithmNotSupported :
-            ProofGenerationError("ProofTypeSigningAlgorithmNotSupported")
+        class ProofTypeSigningAlgorithmNotSupported : ProofGenerationError("ProofTypeSigningAlgorithmNotSupported")
     }
 
     /**
      * Sealed hierarchy of errors related to validation of request encryption parameters.
      */
-    sealed class RequestEncryptionError(message: String) : CredentialIssuanceError(message) {
-
+    sealed class RequestEncryptionError(
+        message: String,
+    ) : CredentialIssuanceError(message) {
         /**
          * Request encryption JWK is not of the ones advertised by issuer.
          */
-        class RequestEncryptionKeyNotAnIssuerKey :
-            RequestEncryptionError("RequestEncryptionKeyNotAnIssuerKey")
+        class RequestEncryptionKeyNotAnIssuerKey : RequestEncryptionError("RequestEncryptionKeyNotAnIssuerKey")
 
         /**
          * Request encryption method specified is not supported from issuance server.
@@ -442,8 +469,9 @@ sealed class CredentialIssuanceError(message: String) : Throwable(message) {
     /**
      * Sealed hierarchy of errors related to validation of encryption parameters passed along with the issuance request.
      */
-    sealed class ResponseEncryptionError(message: String) : CredentialIssuanceError(message) {
-
+    sealed class ResponseEncryptionError(
+        message: String,
+    ) : CredentialIssuanceError(message) {
         /**
          * Wallet requires Credential Response encryption, but it is not supported by the issuance server.
          */
@@ -506,6 +534,6 @@ sealed class CredentialIssuanceError(message: String) : Throwable(message) {
         val expectedContentType: String,
         val invalidContentType: String,
     ) : CredentialIssuanceError(
-        "Encrypted response content-type expected to be $expectedContentType but instead was $invalidContentType",
-    )
+            "Encrypted response content-type expected to be $expectedContentType but instead was $invalidContentType",
+        )
 }

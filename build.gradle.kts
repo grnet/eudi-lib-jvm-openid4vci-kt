@@ -15,7 +15,6 @@ plugins {
     alias(libs.plugins.kover)
     alias(libs.plugins.dokka)
     alias(libs.plugins.maven.publish)
-    alias(libs.plugins.dependency.check)
 }
 
 repositories {
@@ -38,7 +37,7 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.jsoup)
     testImplementation(kotlin("test"))
-    testImplementation(libs.ktor.client.okhttp)
+    testImplementation(libs.ktor.client.apache)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.ktor.server.content.negotiation)
     testImplementation(libs.ktor.client.mock)
@@ -122,12 +121,5 @@ mavenPublishing {
             system = "github"
             url = "${Meta.BASE_URL}/actions"
         }
-    }
-}
-
-dependencyCheck {
-    formats = mutableListOf("XML", "HTML")
-    nvd {
-        apiKey = System.getenv("NVD_API_KEY") ?: properties["nvdApiKey"]?.toString() ?: ""
     }
 }
